@@ -1,88 +1,50 @@
 // SPDX-License-Identifier: Apache-2.0
-
-use cpp_build;
+extern crate bindgen;
 
 use std::env;
-use std::process::Command;
+use std::path::PathBuf;
 
-fn make_and_install(
-    source_dir: &str,
-    build_dir: &str,
-    install_dir: &str,
-) -> std::io::Result<()> {
-    let cmake_install_prefix = format!("-DCMAKE_INSTALL_PREFIX={}", install_dir);
-
-    for iceoryx_component in &["iceoryx_utils", "iceoryx_posh"] {
-        let component_source_dir = format!("{}/{}", source_dir, iceoryx_component);
-        let component_build_dir = format!("{}/{}", build_dir, iceoryx_component);
-
-        Command::new("mkdir")
-            .args(&["-p", &component_build_dir])
-            .output()
-            .map_err(|out| {
-                println!("{:?}", out);
-                out
-            })
-            .map(|out| println!("{:?}", out))?;
-
-        Command::new("cmake")
-            .current_dir(&component_build_dir)
-            .args(&[
-                "-DCMAKE_BUILD_TYPE=Release",
-                "-DBUILD_SHARED_LIBS=OFF",
-                &cmake_install_prefix,
-                &component_source_dir,
-            ])
-            .output()
-            .map_err(|out| {
-                println!("{:?}", out);
-                out
-            })
-            .map(|out| println!("{:?}", out))?;
-
-        Command::new("cmake")
-            .current_dir(&component_build_dir)
-            .args(&["--build", ".", "--target", "install"])
-            .output()
-            .map_err(|out| {
-                println!("{:?}", out);
-                out
-            })
-            .map(|out| println!("{:?}", out))?;
-    }
-
-    Ok(())
-}
-
-fn main() -> std::io::Result<()> {
-    let current_dir = env::current_dir()?;
-    let current_dir = current_dir.to_str().expect("Valid dir");
-
-    let iceoryx_source_dir = format!("{}/{}", current_dir, "iceoryx");
-    let iceoryx_build_dir = format!("{}/{}/{}", current_dir, "target", "iceoryx-build");
-    let iceoryx_install_dir = format!("{}/{}/{}", current_dir, "target", "iceoryx-install");
-
-    make_and_install(
-        &iceoryx_source_dir,
-        &iceoryx_build_dir,
-        &iceoryx_install_dir,
-    )?;
-
-    let iceoryx_include_dir = format!("{}/{}", iceoryx_install_dir, "include");
-    let iceoryx_lib_dir = format!("{}/{}", iceoryx_install_dir, "lib");
-    cpp_build::Config::new()
-        .include(iceoryx_include_dir)
-        .flag("-Wno-noexcept-type")
-        .flag("-std=c++14")
-        .build("src/lib.rs");
-
-    println!("cargo:rustc-link-search={}", iceoryx_lib_dir);
-
+fn main() {
+    let link_search_path: String = if let Ok(path) = std::env::var("ICEORYX_LIB") {
+        format!("cargo:rustc-link-search={}", path)
+    } else {
+        "cargo:rustc-link-search=/usr/local/lib".into()
+    };
+    println!("{}", link_search_path);
     println!("cargo:rustc-link-lib=iceoryx_posh_roudi");
     println!("cargo:rustc-link-lib=iceoryx_posh");
     println!("cargo:rustc-link-lib=iceoryx_utils");
     println!("cargo:rustc-link-lib=iceoryx_platform");
+    println!("cargo:rustc-link-lib=iceoryx_binding_c");
     println!("cargo:rustc-link-lib=stdc++");
 
-    Ok(())
+    // Tell cargo to invalidate the built crate whenever the wrapper changes
+    println!("cargo:rerun-if-changed=wrapper.h");
+
+    // The bindgen::Builder is the main entry point
+    // to bindgen, and lets you build up options for
+    // the resulting bindings.
+    let bindings = bindgen::Builder::default()
+        // The input header we would like to generate
+        // bindings for.
+        .header("wrapper.h")
+        .clang_arg("-std=c++14")
+        .clang_arg("-x")
+        .clang_arg("c++")
+        // blocklist
+        // .blocklist_type("iox_notification_info_t")
+        // Tell cargo to invalidate the built crate whenever any of the
+        // included header files changed.
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
+        // Finish the builder and generate the bindings.
+        .generate()
+        // Unwrap the Result and panic on failure.
+        .expect("Unable to generate bindings");
+
+    // Write the bindings to the $OUT_DIR/bindings.rs file.
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+    bindings
+        .write_to_file(out_path.join("bindings.rs"))
+        // .write_to_file("/home/zs/bindings.rs")
+        .expect("Couldn't write bindings!");
 }

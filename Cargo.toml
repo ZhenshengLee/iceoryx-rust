@@ -1,17 +1,32 @@
 [package]
-name = "iceoryx-rs"
-version = "0.0.10"
-authors = ["Mathias »Bob« Kraus <k.hias@gmx.de>"]
+name = "iceoryx-rs-c"
+version = "0.0.1"
+authors = ["ZhenshengLee"]
 edition = "2018"
 license = "Apache-2.0"
 build = "build.rs"
+keywords = ["iceoryx"]
+readme = "README.md"
+categories = ["api-bindings"]
+description = """
+Low-level API for the native iceoryx bindings (libiceoryx-binding-c).
+"""
 
 [lib]
-name = "iceoryx_rs"
+name = "iceoryx_rs_c"
 
-[build-dependencies]
-cpp_build = "0.5"
+[[bin]]
+name = "ice_rs_publisher"
+path = "examples/icedelivery_in_rs/ice_rs_publisher.rs"
+
+[[bin]]
+name = "ice_rs_subscriber"
+path = "examples/icedelivery_in_rs/ice_rs_subscriber.rs"
 
 [dependencies]
-cpp = "0.5"
+libc = "0.2"
 thiserror = "1.0"
+
+[build-dependencies]
+bindgen = "0.58.1"
+cmake = "0.1"

@@ -1,15 +1,8 @@
-// SPDX-License-Identifier: Apache-2.0
+#![allow(non_upper_case_globals)]
+#![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
+#![allow(improper_ctypes)]
 
-#[macro_use]
-extern crate cpp;
+// pub const DDS_DOMAIN_DEFAULT                : u32 = 0xffffffff as u32;
 
-mod error;
-mod runtime;
-
-pub mod introspection;
-pub mod pb;
-pub mod sb;
-
-// re-export structs
-pub use error::IceOryxError;
-pub use runtime::Runtime;
+include!(concat!(env!("OUT_DIR"), "/bindings.rs"));

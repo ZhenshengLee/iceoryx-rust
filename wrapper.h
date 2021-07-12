@@ -1,0 +1,16 @@
+// #include "iceoryx_binding_c/api.h"
+// todo: exposed cpp api in header file
+// https://github.com/eclipse-iceoryx/iceoryx/issues/879
+#include "iceoryx_binding_c/notification_info.h"
+#include "iceoryx_binding_c/chunk.h"
+#include "iceoryx_binding_c/enums.h"
+#include "iceoryx_binding_c/node.h"
+#include "iceoryx_binding_c/publisher.h"
+#include "iceoryx_binding_c/runtime.h"
+#include "iceoryx_binding_c/subscriber.h"
+#include "iceoryx_binding_c/types.h"
+#include "iceoryx_binding_c/user_trigger.h"
+#include "iceoryx_binding_c/wait_set.h"
+#include "iceoryx_binding_c/listener.h"
+#include "iceoryx_binding_c/service_description.h"
+#include "iceoryx_binding_c/log.h"
