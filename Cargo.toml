@@ -28,5 +28,5 @@ libc = "0.2"
 thiserror = "1.0"
 
 [build-dependencies]
-bindgen = "0.58.1"
+bindgen = "=0.58.1"
 cmake = "0.1"

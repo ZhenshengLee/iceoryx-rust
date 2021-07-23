@@ -8,7 +8,7 @@ fn main() {
     let link_search_path: String = if let Ok(path) = std::env::var("ICEORYX_LIB") {
         format!("cargo:rustc-link-search={}", path)
     } else {
-        "cargo:rustc-link-search=/usr/local/lib".into()
+        "cargo:rustc-link-search=/opt/iceoryx/iceoryx/lib".into()
     };
     println!("{}", link_search_path);
     println!("cargo:rustc-link-lib=iceoryx_posh_roudi");
@@ -31,6 +31,8 @@ fn main() {
         .clang_arg("-std=c++14")
         .clang_arg("-x")
         .clang_arg("c++")
+        .clang_arg("-I/opt/iceoryx/iceoryx/include")
+        .clang_arg("-L/opt/iceoryx/iceoryx/lib")
         // blocklist
         // .blocklist_type("iox_notification_info_t")
         // Tell cargo to invalidate the built crate whenever any of the

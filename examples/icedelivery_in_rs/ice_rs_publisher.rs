@@ -58,7 +58,7 @@ fn main() {
 
             iox_pub_publish_chunk(publisher, user_payload);
 
-            println!("send a copy...");
+            println!("iox-rs-publisher sent value: {}", ct);
             thread::sleep(Duration::from_millis(400));
         }
     }
