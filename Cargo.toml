@@ -1,19 +1,22 @@
 [package]
 name = "iceoryx-rs-c"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["ZhenshengLee"]
 edition = "2018"
 license = "Apache-2.0"
 build = "build.rs"
 keywords = ["iceoryx"]
 readme = "README.md"
-categories = ["api-bindings"]
-description = """
-Low-level API for the native iceoryx bindings (libiceoryx-binding-c).
-"""
+repository = "https://github.com/ZhenshengLee/iceoryx-rust"
+categories = ["midleware", "external-ffi-bindings"]
+description = "High-level iceoryx library in Rust"
+
+[features]
+# Only build docs, don't link to anything
+docs-only = ["iceoryx-sys/docs-only"]
 
 [lib]
-name = "iceoryx_rs_c"
+name = "iceoryx_rust"
 
 [[bin]]
 name = "ice_rs_publisher"
@@ -23,10 +26,6 @@ path = "examples/icedelivery_in_rs/ice_rs_publisher.rs"
 name = "ice_rs_subscriber"
 path = "examples/icedelivery_in_rs/ice_rs_subscriber.rs"
 
-[dependencies]
-libc = "0.2"
-thiserror = "1.0"
-
-[build-dependencies]
-bindgen = "=0.58.1"
-cmake = "0.1"
+[package.metadata.docs.rs]
+no-default-features = true
+features = ["docs-only"]

@@ -1,0 +1,26 @@
+[package]
+authors = ["ZhenshengLee"]
+categories = ["midleware", "external-ffi-bindings"]
+description = "Rust abstraction layer for iceoryx"
+edition = "2018"
+keywords = ["iceoryx"]
+readme = "README.md"
+license = "Apache-2.0"
+version = "0.0.2"
+
+[features]
+# Only build docs, don't link to anything
+docs-only = []
+
+[dependencies]
+libc = "0.2"
+thiserror = "1.0"
+realsense-sys = { path = "iceoryx-sys" }
+
+[build-dependencies]
+bindgen = "=0.58.1"
+cmake = "0.1"
+
+[package.metadata.docs.rs]
+no-default-features = true
+features = ["docs-only"]
